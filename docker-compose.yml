@@ -1,0 +1,29 @@
+
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: notesdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  backend:
+    build: .
+    container_name: fastapi-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=mysql+mysqlconnector://user:password@db:3306/notesdb
+    depends_on:
+      - db
+
+volumes:
+  db_data:
